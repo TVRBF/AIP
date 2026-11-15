@@ -1,0 +1,131 @@
+Practical 3: Tower of Hanoi Using State Space Search (BFS)
+1. Aim:
+To implement the Tower of Hanoi problem using State Space Search and Breadth-First Search (BFS) algorithm.
+
+2. Theory:
+Tower of Hanoi:
+Tower of Hanoi is a mathematical puzzle consisting of three rods (A, B, C) and disks of different sizes.
+The objective is to move all disks from the source rod (A) to the destination rod (C) using an auxiliary rod (B).
+Rules:
+1. Only one disk can be moved at a time.
+2. Only the top disk can be moved.
+3. A larger disk cannot be placed on a smaller disk.
+State Space Search:
+State Space Search is a problem-solving technique in Artificial Intelligence that explores different possible states to reach the goal state.
+
+3. Algorithm:
+1. Start the program.
+2. Create the initial state with all disks on rod A.
+3. Define the goal state with all disks on rod C.
+4. Create a queue and insert the initial state.
+5. Create a visited set to store visited states.
+6. Remove the first state from the queue.
+7. Check whether the current state is the goal state.
+8. Generate all possible legal disk movements.
+9. Add new states to the queue if they are not visited.
+10. Repeat until the goal state is found.
+11. Display all states from initial to goal.
+12. Stop the program.
+
+4.Python Code:
+
+from collections import deque
+
+# Define the Tower of Hanoi function
+def hanoi(n):
+
+    # Define the initial and goal states
+    start = (tuple(range(n, 0, -1)), (), ())
+    goal = ((), (), tuple(range(n, 0, -1)))
+
+    # Define the names of the three rods
+    names = ['A', 'B', 'C']
+
+    # Initialize the BFS queue with the starting state
+    queue = deque([start])
+
+    # Store all visited states
+    visited = {start}
+
+    # Store the parent of each state
+    parent = {start: None}
+
+    # Store the disk movement for each state
+    moves = {}
+
+    # Continue searching while the queue is not empty
+    while queue:
+
+        # Remove the first state from the queue
+        state = queue.popleft()
+
+        # Check whether the goal state is reached
+        if state == goal:
+            break
+
+        # Try all possible source rods
+        for i in range(3):
+
+            # Try all possible destination rods
+            for j in range(3):
+
+                # Check that source and destination are different
+                if i != j and state[i]:
+
+                    # Get the top disk from the source rod
+                    disk = state[i][-1]
+
+                    # Check whether the move is valid
+                    if not state[j] or state[j][-1] > disk:
+
+                        # Create a copy of the current state
+                        new_state = [list(rod) for rod in state]
+
+                        # Remove the top disk from the source rod
+                        new_state[i].pop()
+
+                        # Add the disk to the destination rod
+                        new_state[j].append(disk)
+
+                        # Convert the new state into a tuple
+                        new_state = tuple(tuple(rod) for rod in new_state)
+
+                        # Check whether the state is already visited
+                        if new_state not in visited:
+
+                            # Mark the new state as visited
+                            visited.add(new_state)
+
+                            # Store the previous state
+                            parent[new_state] = state
+
+                            # Store the disk movement
+                            moves[new_state] = (disk, i, j)
+
+                            # Add the new state to the queue
+                            queue.append(new_state)
+
+    # Reconstruct the solution path
+    path = []
+    current = goal
+
+    # Trace the path from goal state to start state
+    while current != start:
+        path.append(moves[current])
+        current = parent[current]
+
+    # Reverse the path to get the correct movement order
+    path.reverse()
+
+    # Display the solution steps
+    print("Solution Found!")
+    print("Total Moves:", len(path))
+
+    for disk, i, j in path:
+        print("Move disk", disk, "from", names[i], "to", names[j])
+
+
+# Call the function with three disks
+hanoi(3)
+5.Conclusion:
+Thus, we successfully implemented the Tower of Hanoi problem using State Space Search and BFS algorithm. The program explores different possible states and finds the solution by moving all disks from the source rod to the destination rod.

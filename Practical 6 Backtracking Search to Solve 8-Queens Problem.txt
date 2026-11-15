@@ -1,0 +1,105 @@
+Practical 6: Backtracking Search to Solve 8-Queens Problem
+1. Aim
+To implement the 8-Queens problem using the Backtracking Search algorithm in Python.
+
+2. Theory:
+8-Queens Problem:
+The 8-Queens problem is a chess puzzle in which 8 queens must be placed on an 8×8 chessboard.
+The objective is to place all queens so that no two queens attack each other.
+Rules:
+1. No two queens should be in the same row.
+2. No two queens should be in the same column.
+3. No two queens should be on the same diagonal.
+Backtracking:
+Backtracking is a problem-solving technique that tries different possibilities. If a position is not safe, it goes back and tries another position.
+
+4.Python Code:
+
+
+# Check whether a queen can be safely placed
+def is_safe(board, row, col):
+
+    # Check all previously placed queens
+    for r in range(row):
+
+        # Get the column position of the previous queen
+        c = board[r]
+
+        # Check the same column and diagonal positions
+        if c == col or abs(c - col) == abs(r - row):
+            return False
+
+    # Return True if the position is safe
+    return True
+
+
+# Solve the 8-Queens problem using backtracking
+def solve(board, row, n=8):
+
+    # Base condition: All queens are successfully placed
+    if row == n:
+        return True
+
+    # Try placing a queen in every column
+    for col in range(n):
+
+        # Check whether the current position is safe
+        if is_safe(board, row, col):
+
+            # Place the queen in the current column
+            board[row] = col
+
+            # Recursively place a queen in the next row
+            if solve(board, row + 1, n):
+                return True
+
+            # Remove the queen if the placement fails
+            board[row] = -1
+
+    # Return False if no valid position is found
+    return False
+
+
+# Display the chessboard
+def print_board(board):
+
+    # Get the size of the chessboard
+    n = len(board)
+
+    # Print each row of the chessboard
+    for r in range(n):
+
+        # Print Q for queen and . for empty positions
+        print(" ".join("Q" if board[r] == c else "." for c in range(n)))
+
+
+# Main program
+if __name__ == "__main__":
+
+    # Define the number of queens
+    N = 8
+
+    # Initialize the board with empty positions
+    board = [-1] * N
+
+    # Call the backtracking function
+    if solve(board, 0, N):
+
+        # Display the queen positions
+        print("Solution (column of queen in each row):", board)
+
+        print()
+
+        # Display the chessboard
+        print_board(board)
+
+    else:
+
+        # Display a message if no solution exists
+        print("No Solution exists")
+
+5.Conclusion:
+Thus, we successfully implemented the 8-Queens problem using the Backtracking Search algorithm. The program places 8 queens on a chessboard without allowing any two queens to attack each other.
+
+
+

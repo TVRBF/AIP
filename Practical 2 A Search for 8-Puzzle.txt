@@ -1,0 +1,210 @@
+Practical 2: A* Search for 8-Puzzle Problem
+1. Aim:
+To implement the A* search algorithm to solve the 8-Puzzle problem by finding the shortest path from the initial state to the goal state.
+
+2.Theory:
+8-Puzzle Problem:
+The 8-Puzzle is a sliding puzzle containing 8 numbered tiles and one empty space in a 3×3 grid.
+The objective is to arrange the tiles in the correct order by moving one tile at a time into the empty space.
+A Search Algorithm:*
+A* is an informed search algorithm that finds the best path from the starting state to the goal state.
+It uses the following formula:
+f(n) = g(n) + h(n)
+Where:
+- g(n) = Cost from the starting state to current state.
+- h(n) = Estimated cost from current state to goal.
+- f(n) = Total estimated cost.
+Manhattan Distance: It calculates the distance between the current position and the goal position of each tile.
+
+3. Algorithm:
+1. Start the program.
+2. Define the initial state and goal state.
+3. Calculate the heuristic value using Manhattan Distance.
+4. Calculate total cost using f(n) = g(n) + h(n).
+5. Select the state having the lowest cost.
+6. Generate possible next states by moving the empty space.
+7. Repeat until the goal state is reached.
+8. Display the solution path.
+9. Stop the program.
+
+4.Python Code:
+
+import heapq
+
+# Calculate Manhattan Distance Heuristic
+def heuristic(state, goal):
+    distance = 0
+
+    # Check the position of each number
+    for i in range(9):
+
+        # Ignore the blank space (0)
+        if state[i] != 0:
+
+            # Find the goal position of the current number
+            goal_index = goal.index(state[i])
+
+            # Calculate current row and column
+            current_row, current_col = divmod(i, 3)
+
+            # Calculate goal row and column
+            goal_row, goal_col = divmod(goal_index, 3)
+
+            # Calculate Manhattan Distance
+            distance += abs(current_row - goal_row)
+            distance += abs(current_col - goal_col)
+
+    return distance
+
+
+# Generate possible next states
+def get_neighbors(state):
+    neighbors = []
+
+    # Find the position of the blank space
+    zero = state.index(0)
+    row, col = divmod(zero, 3)
+
+    # Define four possible movements
+    moves = [
+        (-1, 0),  # Up
+        (1, 0),   # Down
+        (0, -1),  # Left
+        (0, 1)    # Right
+    ]
+
+    # Try all possible movements
+    for dr, dc in moves:
+
+        # Calculate the new position
+        new_row = row + dr
+        new_col = col + dc
+
+        # Check whether the position is inside the grid
+        if 0 <= new_row < 3 and 0 <= new_col < 3:
+
+            # Calculate the new blank position
+            new_zero = new_row * 3 + new_col
+
+            # Create a new puzzle state
+            new_state = list(state)
+
+            # Swap the blank space with the adjacent number
+            new_state[zero], new_state[new_zero] = (
+                new_state[new_zero], new_state[zero]
+            )
+
+            # Store the new state
+            neighbors.append(tuple(new_state))
+
+    return neighbors
+
+
+# A* Search Algorithm
+def astar(start, goal):
+    priority_queue = []
+
+    # Insert the initial state into the priority queue
+    heapq.heappush(
+        priority_queue,
+        (heuristic(start, goal), 0, start)
+    )
+
+    # Store the previous state of each state
+    parent = {start: None}
+
+    # Store the actual cost from the start state
+    cost = {start: 0}
+
+    # Continue searching while the queue is not empty
+    while priority_queue:
+
+        # Remove the state with the lowest priority
+        f, g, current = heapq.heappop(priority_queue)
+
+        # Skip outdated queue entries
+        if g != cost[current]:
+            continue
+
+        # Check whether the goal is reached
+        if current == goal:
+            path = []
+
+            # Reconstruct the path from goal to start
+            while current is not None:
+                path.append(current)
+                current = parent[current]
+
+            # Reverse the path to get start-to-goal order
+            return path[::-1]
+
+        # Generate and explore neighboring states
+        for neighbor in get_neighbors(current):
+
+            # Calculate the new actual cost
+            new_cost = g + 1
+
+            # Update the state if a better path is found
+            if neighbor not in cost or new_cost < cost[neighbor]:
+
+                cost[neighbor] = new_cost
+                parent[neighbor] = current
+
+                # Calculate total estimated cost
+                f = new_cost + heuristic(neighbor, goal)
+
+                # Add the new state to the priority queue
+                heapq.heappush(
+                    priority_queue,
+                    (f, new_cost, neighbor)
+                )
+
+    # Return None if no solution is found
+    return None
+
+
+# Display the puzzle state
+def display(state):
+
+    # Print the puzzle in 3x3 format
+    for i in range(0, 9, 3):
+        print(*state[i:i + 3])
+
+    print()
+
+
+# Main Program
+
+# Define the initial state
+start = (1, 2, 3,
+         4, 0, 6,
+         7, 5, 8)
+
+# Define the goal state
+goal = (1, 2, 3,
+        4, 5, 6,
+        7, 8, 0)
+
+# Display the initial puzzle
+print("Initial State:")
+display(start)
+
+# Call the A* search algorithm
+path = astar(start, goal)
+
+# Display the solution
+if path:
+    print("Solution found!")
+    print("Total moves:", len(path) - 1)
+
+    # Display each step of the solution
+    for step, state in enumerate(path):
+        print("Step", step)
+        display(state)
+
+else:
+    print("No solution exists.")
+
+
+5. Conclusion:
+Thus, we studied and implemented the A* search algorithm for solving the 8-Puzzle problem. It uses path cost and heuristic cost to find an optimal solution.

@@ -1,0 +1,159 @@
+Practical 4: Sudoku Solver Using Backtracking
+1. Aim:
+To implement a Sudoku Solver using the Backtracking algorithm in Python.
+2. Theory
+Sudoku:
+Sudoku is a number puzzle consisting of a 9×9 grid. The objective is to fill empty cells with numbers from 1 to 9.
+Rules of Sudoku:
+1. Each row must contain numbers 1 to 9 without repetition.
+2. Each column must contain numbers 1 to 9 without repetition.
+3. Each 3×3 box must contain numbers 1 to 9 without repetition.
+Backtracking:
+Backtracking is an algorithm that tries different possible solutions. If a solution is incorrect, it goes back and tries another possibility.
+
+3. Algorithm:
+1. Start the program.
+2. Create a 9×9 Sudoku grid.
+3. Find an empty cell.
+4. Try numbers from 1 to 9.
+5. Check whether the number is valid in the row, column and 3×3 box.
+6. If valid, place the number in the cell.
+7. Repeat the process for the next empty cell.
+8. If no number is valid, backtrack and try another number.
+9. Display the solved Sudoku.
+10. Stop the program
+
+
+4.Python Code:
+
+# Find the first empty cell in the Sudoku board
+def find_empty(board):
+
+    # Check every row and column
+    for i in range(9):
+        for j in range(9):
+
+            # Return the position of the empty cell
+            if board[i][j] == 0:
+                return i, j
+
+    # Return None if no empty cell is found
+    return None
+
+
+# Find all possible valid numbers for a cell
+def get_candidates(board, row, col):
+
+    # Initialize candidates with numbers from 1 to 9
+    candidates = set(range(1, 10))
+
+    # Remove numbers already present in the same row
+    candidates -= set(board[row])
+
+    # Remove numbers already present in the same column
+    candidates -= {board[i][col] for i in range(9)}
+
+    # Calculate the starting position of the 3x3 box
+    box_row = (row // 3) * 3
+    box_col = (col // 3) * 3
+
+    # Remove numbers already present in the 3x3 box
+    for i in range(box_row, box_row + 3):
+        for j in range(box_col, box_col + 3):
+            candidates.discard(board[i][j])
+
+    # Remove zero because it represents an empty cell
+    candidates.discard(0)
+
+    # Return the remaining valid candidates
+    return candidates
+
+
+# Solve Sudoku using recursion and backtracking
+def solve_sudoku(board):
+
+    # Find the next empty cell
+    empty = find_empty(board)
+
+    # If no empty cell remains, Sudoku is solved
+    if empty is None:
+        return True
+
+    # Get the row and column of the empty cell
+    row, col = empty
+
+    # Find valid candidate numbers for the empty cell
+    candidates = get_candidates(board, row, col)
+
+    # Try each candidate number one by one
+    for num in sorted(candidates):
+
+        # Place the candidate number in the empty cell
+        board[row][col] = num
+
+        # Recursively solve the remaining empty cells
+        if solve_sudoku(board):
+            return True
+
+        # Undo the choice if it leads to an invalid solution
+        board[row][col] = 0
+
+    # Return False if no candidate gives a solution
+    return False
+
+
+# Display the Sudoku board
+def print_board(board):
+
+    # Print all nine rows
+    for i in range(9):
+
+        # Print a horizontal separator after every three rows
+        if i % 3 == 0 and i != 0:
+            print("- - - - - - - - - - -")
+
+        # Print all nine columns
+        for j in range(9):
+
+            # Print a vertical separator after every three columns
+            if j % 3 == 0 and j != 0:
+                print("|", end=" ")
+
+            print(board[i][j], end=" ")
+
+        print()
+
+
+# Define the Sudoku puzzle (0 represents an empty cell)
+sudoku = [
+    [5, 3, 0, 0, 7, 0, 0, 0, 0],
+    [6, 0, 0, 1, 9, 5, 0, 0, 0],
+    [0, 9, 8, 0, 0, 0, 0, 6, 0],
+    [8, 0, 0, 0, 6, 0, 0, 0, 3],
+    [4, 0, 0, 8, 0, 3, 0, 0, 1],
+    [7, 0, 0, 0, 2, 0, 0, 0, 6],
+    [0, 6, 0, 0, 0, 0, 2, 8, 0],
+    [0, 0, 0, 4, 1, 9, 0, 0, 5],
+    [0, 0, 0, 0, 8, 0, 0, 7, 9]
+]
+
+
+# Main Program
+
+# Display the original Sudoku puzzle
+print("Original Sudoku:")
+print_board(sudoku)
+
+# Call the Sudoku solving function
+if solve_sudoku(sudoku):
+
+    # Display the completed Sudoku
+    print("\nSolved Sudoku:")
+    print_board(sudoku)
+
+else:
+    # Display a message if no solution exists
+    print("\nNo solution exists.")
+5.Conclusion:
+Thus, we successfully implemented a Sudoku Solver using the Backtracking algorithm and Constraint Propagation. The program finds valid numbers and fills empty cells to solve the Sudoku puzzle.
+

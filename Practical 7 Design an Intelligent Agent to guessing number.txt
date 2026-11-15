@@ -1,0 +1,85 @@
+Practical 7: Design an Intelligent Agent That Guesses a Number Using Feedback
+1. Aim:
+To design and implement an intelligent agent that guesses a number between 1 and 100 using user feedback (Higher, Lower or Correct).
+
+2. Theory:
+Intelligent Agent:
+An intelligent agent is a system that observes the environment, takes input and makes decisions to achieve a goal.
+Number Guessing Agent:
+In this practical, the agent guesses a number between 1 and 100. The user provides feedback to help the agent find the correct number.
+Binary Search:
+Binary Search is a searching technique that repeatedly divides the search range into two halves to find the correct number.
+Feedback:
+- Higher: The secret number is greater than the guess.
+- Lower: The secret number is smaller than the guess.
+- Correct: The agent has guessed the correct number.
+
+3. Algorithm:
+1. Start the program.
+2. Set the range from 1 to 100.
+3. Initialize the attempt counter to 0.
+4. Calculate the middle number using (low + high) // 2.
+5. Display the guessed number.
+6. Ask the user for feedback.
+7. If feedback is Correct, display the number of attempts and stop.
+8. If feedback is Higher, update low = guess + 1.
+9. If feedback is Lower, update high = guess - 1.
+10. Repeat until the correct number is guessed.
+11. Stop the program.
+
+4.Python Code:
+
+
+# Implement Number Guessing Game using Binary Search
+
+def guessing_number():
+
+    # Display the number range
+    print("Range of the number is between 1 to 100.")
+
+    # Initialize the lower and upper limits
+    low = 1
+    high = 100
+
+    # Initialize the attempt counter
+    attempt = 0
+
+    # Continue searching while the range is valid
+    while low <= high:
+
+        # Calculate the middle value
+        guess = (low + high) // 2
+
+        # Increase the attempt counter
+        attempt += 1
+
+        # Display the guessed number
+        print(f"\nIs your number {guess}?")
+
+        # Get feedback from the user
+        feedback = input("Enter 'higher', 'lower' or 'correct': ")
+
+        # Check whether the guessed number is correct
+        if feedback == "correct":
+
+            print(f"Your number is guessed in {attempt} attempts")
+            break
+
+        # Search in the upper half of the range
+        elif feedback == "higher":
+            low = guess + 1
+
+        # Search in the lower half of the range
+        elif feedback == "lower":
+            high = guess - 1
+
+        # Handle invalid user input
+        else:
+            print("Invalid input, please enter correct feedback")
+
+
+# Call the guessing number function
+guessing_number()
+
+5. Conclusion
+Thus, we successfully implemented an Intelligent Number Guessing Agent using Binary Search. The agent uses user feedback to update the search range and guess the correct number efficiently.

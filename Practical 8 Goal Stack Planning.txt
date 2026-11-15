@@ -1,0 +1,150 @@
+ Practical 8: Goal Stack Planning
+
+1. Aim:
+
+To implement Goal Stack Planning for the Blocks World problem using Python and achieve the desired goal state by executing a sequence of actions.
+
+2.Theory:
+
+Goal Stack Planning
+
+Goal Stack Planning is an Artificial Intelligence technique used to solve problems by dividing a main goal into smaller sub-goals.
+
+It uses a stack to store goals, actions and their preconditions. It follows the LIFO (Last In First Out) principle.
+
+### Blocks World Problem
+
+Blocks World is a planning problem in which blocks are arranged on a table or placed on top of other blocks.
+
+The objective is to arrange the blocks according to the given goal state.
+
+3. Algorithm:
+1. Start the program.
+2. Define the initial state and goal state.
+3. Create an empty stack and plan list.
+4. Push the goals onto the stack.
+5. Pop the goal from the stack.
+6. Check whether the goal is already achieved.
+7. If not achieved, identify the required action.
+8. Push the action and its preconditions onto the stack.
+9. Check and satisfy the preconditions.
+10. Execute the action and update the current state.
+11. Repeat until all goals are achieved.
+12. Display the final plan.
+13. Stop the program.
+
+4. Python Code:
+
+
+# Implement Goal Stack Planning
+
+def goal_stack_planning(initial, goal):
+
+    # Initialize the stack, plan and current state
+    stack = []
+    plan = []
+    state = initial.copy()
+
+    # Push goals onto the stack in reverse order
+    for g in reversed(goal):
+        stack.append(("GOAL", g))
+
+    # Process goals using the LIFO principle
+    while stack:
+
+        # Remove the top item from the stack
+        item = stack.pop()
+        kind, current = item
+
+        # Check whether the current item is a goal
+        if kind == "GOAL":
+
+            # Process the goal only if it is not satisfied
+            if current not in state:
+
+                # Handle the ON block condition
+                if current.startswith("ON("):
+
+                    block, support = current[3:-1].split(",")
+
+                    # Add the STACK action to the stack
+                    stack.append(("ACTION", "STACK(" + block + "," + support + ")"))
+
+                    # Add the required preconditions
+                    stack.append(("GOAL", "CLEAR(" + support + ")"))
+                    stack.append(("GOAL", "HOLDING(" + block + ")"))
+
+                # Handle the HOLDING condition
+                elif current.startswith("HOLDING("):
+
+                    block = current[8:-1]
+
+                    # Add the PICKUP action to the stack
+                    stack.append(("ACTION", "PICKUP(" + block + ")"))
+
+                    # Add the preconditions required for PICKUP
+                    stack.append(("GOAL", "ARMEMPTY"))
+                    stack.append(("GOAL", "CLEAR(" + block + ")"))
+                    stack.append(("GOAL", "ONTABLE(" + block + ")"))
+
+        else:
+
+            # Add the selected action to the final plan
+            plan.append(current)
+
+            # Execute the PICKUP action
+            if current.startswith("PICKUP("):
+
+                block = current[7:-1]
+
+                # Remove the old conditions from the state
+                state.remove("ONTABLE(" + block + ")")
+                state.remove("CLEAR(" + block + ")")
+                state.remove("ARMEMPTY")
+
+                # Add the new holding condition
+                state.append("HOLDING(" + block + ")")
+
+            # Execute the STACK action
+            elif current.startswith("STACK("):
+
+                block, support = current[6:-1].split(",")
+
+                # Remove the old conditions from the state
+                state.remove("HOLDING(" + block + ")")
+                state.remove("CLEAR(" + support + ")")
+
+                # Add the new conditions to the state
+                state.append("ON(" + block + "," + support + ")")
+                state.append("CLEAR(" + block + ")")
+                state.append("ARMEMPTY")
+
+    # Display the final plan
+    print("Plan:")
+
+    for action in plan:
+        print(action)
+
+    # Display the final state
+    print("\nFinal State:", state)
+
+
+# Define the initial state
+initial = [
+    "ONTABLE(A)",
+    "ONTABLE(B)",
+    "CLEAR(A)",
+    "CLEAR(B)",
+    "ARMEMPTY"
+]
+
+# Define the goal state
+goal = ["ON(A,B)"]
+
+# Call the goal stack planning function
+goal_stack_planning(initial, goal)
+
+
+6. Conclusion:
+
+Thus, we successfully implemented Goal Stack Planning for the Blocks World problem using Python. The program uses a stack and LIFO principle to divide the goal into sub-goals, execute actions and achieve the desired goal state.

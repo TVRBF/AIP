@@ -1,0 +1,152 @@
+Practical 5: Use BFS to Solve a Planning Problem
+1. Aim:
+To implement Breadth-First Search (BFS) to solve a planning problem and find the shortest path from the initial state to the goal state.
+
+2. Theory:
+Breadth-First Search (BFS):
+BFS is a searching algorithm used to explore nodes level by level. It uses a queue to visit nodes in the order they are discovered.
+Planning Problem:
+A planning problem involves finding a sequence of actions to reach a desired goal from an initial state.
+Important Concepts:
+- Initial State: Starting position.
+- Goal State: Desired destination.
+- Actions: Possible movements.
+- Queue: Stores states waiting to be explored.
+- Visited: Stores already explored states.
+- BFS: Finds the shortest path in an unweighted graph.
+
+3. Algorithm:
+1. Start the program.
+2. Define the initial state and goal state.
+3. Create an empty queue.
+4. Insert the initial state into the queue.
+5. Mark the initial state as visited.
+6. Remove the first state from the queue.
+7. Check whether the current state is the goal.
+8. Generate all possible next states.
+9. Add unvisited states to the queue.
+10. Repeat until the goal is found.
+11. Display the shortest path.
+12. Stop the program.
+
+4. Python Code:
+
+
+from collections import deque
+
+# Breadth First Search for grid navigation
+def bfs(grid, start, goal):
+
+    # Initialize the queue, visited set and parent dictionary
+    Q = deque()
+    visited = set()
+    parent = {}
+
+    # Add the starting position to the queue
+    Q.append(start)
+    visited.add(start)
+    parent[start] = None
+
+    # Define four possible movement directions
+    directions = [
+        (-1, 0),  # Up
+        (1, 0),   # Down
+        (0, -1),  # Left
+        (0, 1)    # Right
+    ]
+
+    # Get the number of rows and columns
+    rows = len(grid)
+    cols = len(grid[0])
+
+    # Continue searching while the queue is not empty
+    while Q:
+
+        # Remove the first position from the queue
+        current = Q.popleft()
+
+        # Check whether the goal is reached
+        if current == goal:
+            break
+
+        # Explore all four possible directions
+        for direction in directions:
+
+            # Calculate the next row and column
+            next_row = current[0] + direction[0]
+            next_col = current[1] + direction[1]
+
+            # Create the next position
+            next_position = (next_row, next_col)
+
+            # Check whether the position is outside the grid
+            if next_row < 0 or next_row >= rows:
+                continue
+
+            if next_col < 0 or next_col >= cols:
+                continue
+
+            # Skip the position if it contains an obstacle
+            if grid[next_row][next_col] == '#':
+                continue
+
+            # Skip the position if it is already visited
+            if next_position in visited:
+                continue
+
+            # Mark the position as visited
+            visited.add(next_position)
+
+            # Store the previous position
+            parent[next_position] = current
+
+            # Add the new position to the queue
+            Q.append(next_position)
+
+    # Check whether the goal was reached
+    if goal not in visited:
+        return None
+
+    # Reconstruct the path from goal to start
+    path = []
+    current = goal
+
+    while current is not None:
+        path.append(current)
+        current = parent[current]
+
+    # Reverse the path to get start-to-goal order
+    path.reverse()
+
+    return path
+
+
+# Define the grid environment
+grid = [
+    ['', 'S', '.', '#'],
+    ['.', '#', '.', '#'],
+    ['.', '#', '.', '.'],
+    ['.', '.', 'G', '.']
+]
+
+# Define the starting and goal positions
+start = (0, 1)
+goal = (3, 2)
+
+# Call the BFS function
+path = bfs(grid, start, goal)
+
+# Display the solution path
+if path is None:
+    print("No path exists")
+
+else:
+    print("Path found")
+
+    for position in path:
+        print(position)
+
+    # Display the total number of moves
+    print("Number of moves:", len(path) - 1)
+5. Conclusion:
+Thus, we successfully implemented Breadth-First Search (BFS) to solve a grid-based planning problem. The algorithm avoids obstacles and finds the shortest path from the starting position to the goal position.
